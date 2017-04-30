@@ -17,25 +17,24 @@ public class AqoursSmart implements SliderPlayer {
 		this.player = player;
 		this.board = new char[dimension][];
 		this.availMove = new HashMap();
-		int count = 0, period = 0, i = 0, j = 0;
+		int count = 0, i = 0, j = 0;
 		while (count < board.length()) {
-			if (period == 0) {
+			if (i == 0) {
 				this.board[j] = new char[dimension];
-				i = 0;
 			}
-			if (period < dimension) {
+			if (i < dimension) {
 				if (board.charAt(count) == player) {
 					int[] position = {j, i};
 					availMove.put(position, new ArrayList<Move.Direction>());
 				}
 				this.board[j][i++] = board.charAt(count);
-				period++;
 			} else {
 				j++;
-				period = 0;
+				i = 0;
 			}
 			count += 2;
 		}
+		printH(availMove);
 	}
 
 	@Override
@@ -108,4 +107,9 @@ public class AqoursSmart implements SliderPlayer {
         return true;
     }
 
+    public void printH(HashMap<int[], ArrayList<Move.Direction>> h) {
+    	for (int[] key: h.keySet()) {
+    		System.out.println(key[0] + " " + key[1]);
+    	}
+    }
 }
