@@ -24,7 +24,7 @@ public class AqoursSmart implements SliderPlayer {
 			}
 			if (i < dimension) {
 				if (board.charAt(count) == player) {
-					System.out.println("Read in: " + j + " " + i );
+//					System.out.println("Read in: " + j + " " + i );
 					int[] position = {j, i};
 					availMove.put(position, new ArrayList<Move.Direction>());
 				}
@@ -35,22 +35,20 @@ public class AqoursSmart implements SliderPlayer {
 				i = 0;
 			}
 		}
-		printH(availMove);
+//		printH(availMove);
 	}
 
 	@Override
 	public void update(Move move) {
 		if (move != null) {
-			char player = board[move.j][move.i];
-			int toi = move.i, toj = move.j;
-			switch(move.d){
-				case UP:	toj--; break;
-				case DOWN:	toj++; break;
-				case RIGHT:	toi++; break;
-				case LEFT:	toi--; break;
+			int i = move.i, j = this.dimension - move.j - 1;
+			char player = board[j][i];
+			int toi = newPosition(j, i, move.d)[1], toj = newPosition(j, i, move.d)[0];
+			if(toi >= 0 || toj >= 0 || toi < this.dimension || toj > this.dimension){
+				board[toj][toi] = player;
 			}
-			board[toj][toi] = player;
-			board[move.j][move.i] = '+';
+			board[j][i] = '+';
+			System.out.println("j: " + j + " i: "+i+" d: "+ move.d+" new pos: "+toj+" "+toi + " player: " + player);
 		}
 	}
 
@@ -59,22 +57,14 @@ public class AqoursSmart implements SliderPlayer {
 		Move move;
 		this.availMove = getAvailMove(this.player, this.availMove);
 		for (int[] key: this.availMove.keySet()) {
+			System.out.println(this.availMove.get(key));
 			if (this.availMove.get(key).isEmpty()) {
 				continue;
 			}
 			move = new Move(key[1], this.dimension - key[0] - 1, this.availMove.get(key).get(0));
 			
-			
-			int toi = move.i, toj = move.j;
-			switch(move.d){
-				case UP:	toj--; break;
-				case DOWN:	toj++; break;
-				case RIGHT:	toi++; break;
-				case LEFT:	toi--; break;
-			}
-			int opos[] = {move.j, move.i};
-			int npos[] = {toj, toi};
-			this.availMove.remove(opos);
+			int npos[] = newPosition(key[0], key[1], move.d);
+			this.availMove.remove(key);
 			this.availMove.put(npos, new ArrayList<Move.Direction>());
 			return move;
 		}
@@ -90,14 +80,11 @@ public class AqoursSmart implements SliderPlayer {
 				if (player == 'V' && d == Move.Direction.DOWN) {
 					continue;
 				}
-				int toi = key[1], toj = key[0];
-				switch(d){
-					case UP:	toj--; break;
-					case DOWN:	toj++; break;
-					case RIGHT:	toi++; break;
-					case LEFT:	toi--; break;
-				}
-				if (inBound(toj, toi, player) && this.board[toj][toi] == '+') {
+				availmove.get(key).remove(d);
+				int npos[] = newPosition(key[0], key[1], d);
+				if (inBound(npos[0], npos[1]) && this.board[npos[0]][npos[1]] == '+') {
+					availmove.get(key).add(d);
+				} else if (!inBound(npos[0], npos[1]) && ((player == 'H' && d == Move.Direction.RIGHT) || (player == 'V' && d == Move.Direction.UP))){
 					availmove.get(key).add(d);
 				}
 			}
@@ -111,11 +98,8 @@ public class AqoursSmart implements SliderPlayer {
      * @param col col number
      * @return true of false
      */
-    private boolean inBound(int col, int row, char player){
+    private boolean inBound(int row, int col){
         if (row < 0 || col < 0 || row >= this.dimension || col >= this.dimension){
-        	if ((player == 'H' && col >= this.dimension) || (player == 'V' && row < 0)) {
-        		return true;
-        	}
         	return false;
         }
         return true;
@@ -127,15 +111,19 @@ public class AqoursSmart implements SliderPlayer {
     	}
     }
     
-    public int[] newPosition(int i, int j, Move.Direction d) {
+    public int[] newPosition(int j, int i, Move.Direction d) {
     	int toi = i, toj = j;
-    	int pos[] = {toj, toi};
+    	int pos[] = new int[2];
 		switch(d){
 			case UP:	toj--; break;
 			case DOWN:	toj++; break;
 			case RIGHT:	toi++; break;
 			case LEFT:	toi--; break;
 		}
+		pos[0] = toj;
+//		System.out.println("j: "+ j +" toj: " + toj + " d: " + d);
+		pos[1] = toi;
+//		System.out.println("i: "+ i +" toi: " + toi + " d: " + d);
 		return pos;
     }
 }
