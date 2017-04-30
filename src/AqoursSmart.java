@@ -63,6 +63,19 @@ public class AqoursSmart implements SliderPlayer {
 				continue;
 			}
 			move = new Move(key[1], this.dimension - key[0] - 1, this.availMove.get(key).get(0));
+			
+			
+			int toi = move.i, toj = move.j;
+			switch(move.d){
+				case UP:	toj--; break;
+				case DOWN:	toj++; break;
+				case RIGHT:	toi++; break;
+				case LEFT:	toi--; break;
+			}
+			int opos[] = {move.j, move.i};
+			int npos[] = {toj, toi};
+			this.availMove.remove(opos);
+			this.availMove.put(npos, new ArrayList<Move.Direction>());
 			return move;
 		}
 		return null;
@@ -112,5 +125,17 @@ public class AqoursSmart implements SliderPlayer {
     	for (int[] key: h.keySet()) {
     		System.out.println(key[0] + " " + key[1]);
     	}
+    }
+    
+    public int[] newPosition(int i, int j, Move.Direction d) {
+    	int toi = i, toj = j;
+    	int pos[] = {toj, toi};
+		switch(d){
+			case UP:	toj--; break;
+			case DOWN:	toj++; break;
+			case RIGHT:	toi++; break;
+			case LEFT:	toi--; break;
+		}
+		return pos;
     }
 }
