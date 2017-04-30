@@ -55,7 +55,7 @@ public class AqoursSmart implements SliderPlayer {
 	@Override
 	public Move move() {
 		Move move;
-		this.availMove = getAvailMove(this.player, this.availMove);
+		getAvailMove(this.player, this.availMove);
 		for (int[] key: this.availMove.keySet()) {
 			System.out.println(this.availMove.get(key));
 			if (this.availMove.get(key).isEmpty()) {
@@ -71,7 +71,7 @@ public class AqoursSmart implements SliderPlayer {
 		return null;
 	}
 	
-	public HashMap<int[], ArrayList<Move.Direction>> getAvailMove(char player, HashMap<int[], ArrayList<Move.Direction>> availmove) {
+	public void getAvailMove(char player, HashMap<int[], ArrayList<Move.Direction>> availmove) {
 		for (int[] key: availmove.keySet()) {
 			for (Move.Direction d: Move.Direction.values()) {
 				if (player == 'H' && d == Move.Direction.LEFT) {
@@ -89,7 +89,6 @@ public class AqoursSmart implements SliderPlayer {
 				}
 			}
 		}
-		return availmove;
 	}
 
     /**
