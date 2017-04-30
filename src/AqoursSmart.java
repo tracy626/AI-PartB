@@ -24,15 +24,16 @@ public class AqoursSmart implements SliderPlayer {
 			}
 			if (i < dimension) {
 				if (board.charAt(count) == player) {
+					System.out.println("Read in: " + j + " " + i );
 					int[] position = {j, i};
 					availMove.put(position, new ArrayList<Move.Direction>());
 				}
 				this.board[j][i++] = board.charAt(count);
+				count += 2;
 			} else {
 				j++;
 				i = 0;
 			}
-			count += 2;
 		}
 		printH(availMove);
 	}
