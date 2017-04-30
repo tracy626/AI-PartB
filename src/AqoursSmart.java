@@ -17,7 +17,7 @@ public class AqoursSmart implements SliderPlayer {
 		this.player = player;
 		this.board = new char[dimension][];
 		this.availMove = new HashMap();
-		int count = 0, i = 0, j = 0;
+		int count = 0, i = 0, j = dimension - 1;
 		while (count < board.length()) {
 			if (i == 0) {
 				this.board[j] = new char[dimension];
@@ -31,7 +31,7 @@ public class AqoursSmart implements SliderPlayer {
 				this.board[j][i++] = board.charAt(count);
 				count += 2;
 			} else {
-				j++;
+				j--;
 				i = 0;
 			}
 		}
@@ -41,7 +41,7 @@ public class AqoursSmart implements SliderPlayer {
 	@Override
 	public void update(Move move) {
 		if (move != null) {
-			int i = move.i, j = this.dimension - move.j - 1;
+			int i = move.i, j = move.j;
 			char player = board[j][i];
 			int toi = newPosition(j, i, move.d)[1], toj = newPosition(j, i, move.d)[0];
 			if(toi >= 0 || toj >= 0 || toi < this.dimension || toj > this.dimension){
@@ -61,7 +61,7 @@ public class AqoursSmart implements SliderPlayer {
 			if (this.availMove.get(key).isEmpty()) {
 				continue;
 			}
-			move = new Move(key[1], this.dimension - key[0] - 1, this.availMove.get(key).get(0));
+			move = new Move(key[1], key[0], this.availMove.get(key).get(0));
 			
 			int npos[] = newPosition(key[0], key[1], move.d);
 			this.availMove.remove(key);
@@ -114,8 +114,8 @@ public class AqoursSmart implements SliderPlayer {
     	int toi = i, toj = j;
     	int pos[] = new int[2];
 		switch(d){
-			case UP:	toj--; break;
-			case DOWN:	toj++; break;
+			case UP:	toj++; break;
+			case DOWN:	toj--; break;
 			case RIGHT:	toi++; break;
 			case LEFT:	toi--; break;
 		}
