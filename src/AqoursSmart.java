@@ -84,7 +84,14 @@ public class AqoursSmart implements SliderPlayer {
 		return null;
 	}
 	
-	public void getAvailMove(char player, HashMap<int[], ArrayList<Move.Direction>> availmove) {
+	/**
+     * get available move for player indicated in the parameter,
+     * and save the position as key and available move into an ArrayList as value of the HashMap,
+     * @param player indicate which piece is querying, 'H' for horizontal, 'V' for vertical
+     *        availmove indicate the HashMap which maps the position of all pieces on the board 
+     *        			and the available move of each piece
+     */
+	private void getAvailMove(char player, HashMap<int[], ArrayList<Move.Direction>> availmove) {
 		for (int[] key: availmove.keySet()) {
 			availmove.put(key, new ArrayList<Move.Direction>());
 			for (Move.Direction d: Move.Direction.values()) {
@@ -110,7 +117,7 @@ public class AqoursSmart implements SliderPlayer {
      * a helper function to check whether a location is in bound
      * @param row row number
      * @param col col number
-     * @return true of false
+     * @return true or false
      */
     private boolean inBound(int row, int col){
         if (row < 0 || col < 0 || row >= this.dimension || col >= this.dimension){
@@ -119,14 +126,14 @@ public class AqoursSmart implements SliderPlayer {
         return true;
     }
 
-    public void printH(HashMap<int[], ArrayList<Move.Direction>> h) {
+    private void printH(HashMap<int[], ArrayList<Move.Direction>> h) {
     	System.out.println("Ava Move:");
     	for (int[] key: h.keySet()) {
     		System.out.println(key[0] + " " + key[1]);
     	}
     }
     
-    public void printB() {
+    private void printB() {
     	System.out.println("BOARD: ");
     	for (int j = dimension -1; j>=0; j--) {
     		for (int i =0; i<dimension; i++) {
@@ -137,7 +144,7 @@ public class AqoursSmart implements SliderPlayer {
     }
     
     
-    public int[] newPosition(int j, int i, Move.Direction d) {
+    private int[] newPosition(int j, int i, Move.Direction d) {
     	int toi = i, toj = j;
     	int pos[] = new int[2];
 		switch(d){
@@ -147,10 +154,12 @@ public class AqoursSmart implements SliderPlayer {
 			case LEFT:	toi--; break;
 		}
 		pos[0] = toj;
-//		System.out.println("j: "+ j +" toj: " + toj + " d: " + d);
 		pos[1] = toi;
-//		System.out.println("i: "+ i +" toi: " + toi + " d: " + d);
 		return pos;
+    }
+    
+    private Move bestMove(){
+    	return null;
     }
     
 }
