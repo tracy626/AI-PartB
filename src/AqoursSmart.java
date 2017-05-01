@@ -1,3 +1,10 @@
+/**
+ * Yue Fang 715889
+ * Zhe Tang 743398
+ * COMP30024 Artificial Intelligence
+ * Project Part B
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
