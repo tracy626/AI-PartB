@@ -199,7 +199,7 @@ public class AqoursSmart implements SliderPlayer {
 		}
 		for(Point key: opP.keySet()){
 			for(Move.Direction d: opP.get(key)){
-				// new curP and update
+				// new curP
 				// new opP
 				alpha = max_Value(alpha, beta, curP, opP, depth) + moveOn(this.opplayer,d);
 				beta = Math.min(alpha, beta);
@@ -218,7 +218,7 @@ public class AqoursSmart implements SliderPlayer {
 		}
 		for(Point key: curP.keySet()){
 			for(Move.Direction d: curP.get(key)){
-				// new and update opP, curP
+				// new opP, curP
 				beta = min_Value(alpha, beta, curP, opP, depth) + moveOn(this.player, d);
 				alpha = Math.max(alpha, beta);
 				if(alpha >= beta){
@@ -289,6 +289,7 @@ public class AqoursSmart implements SliderPlayer {
 		if (depth == 0){
 			return true;
 		}
+		// terminal win, lose;
 		return false;
 	}
 }
