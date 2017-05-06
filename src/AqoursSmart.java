@@ -34,10 +34,8 @@ public class AqoursSmart implements SliderPlayer {
 			this.opplayer = 'H';
 		}
 		while (count < board.length()) {
-			if (i == 0) {
-			}
 			if (i < dimension) {
-				Point pos = new Point(j, i);
+				Point pos = new Point(i,j);
 				if (board.charAt(count) == player) {
 					availMove.put(pos, new ArrayList<Move.Direction>());
 				} else if (board.charAt(count) == 'B') {
@@ -59,7 +57,7 @@ public class AqoursSmart implements SliderPlayer {
 	@Override
 	public void update(Move move) {
 		if (move != null) {
-			Point pos = new Point(move.j, move.i);
+			Point pos = new Point(move.i, move.j);
 			this.op_availMove.remove(pos);
 			Point newpos = newPosition(pos.x, pos.y, move.d);
 			if(newpos.x < this.dimension && newpos.y < this.dimension) {
@@ -83,7 +81,7 @@ public class AqoursSmart implements SliderPlayer {
 				continue;
 			}
 //			printH(availMove);
-			move = new Move(key.y, key.x, this.availMove.get(key).get(0));
+			move = new Move(key.x, key.y, this.availMove.get(key).get(0));
 			
 			Point npos = newPosition(key.x, key.y, move.d);
 			this.availMove.remove(key);
@@ -148,7 +146,7 @@ public class AqoursSmart implements SliderPlayer {
     	}
     }
     
-    private Point newPosition(int j, int i, Move.Direction d) {
+    private Point newPosition(int i, int j, Move.Direction d) {
     	int toi = i, toj = j;
     	Point pos;
 		switch(d){
@@ -157,7 +155,7 @@ public class AqoursSmart implements SliderPlayer {
 			case RIGHT:	toi++; break;
 			case LEFT:	toi--; break;
 		}
-    	pos = new Point(toj, toi);
+    	pos = new Point(toi, toj);
 		return pos;
     }
     
@@ -169,20 +167,21 @@ public class AqoursSmart implements SliderPlayer {
     	Move move = null;
     	int max_i = 0, max_j = 0, max_value = 0, value;
     	Move.Direction max_dir = null;
+    	
     	boolean flag=true;
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
     			value = min_Value(0,0,this.availMove, this.op_availMove, 2);
     			if (flag) {
     				max_value = value;
-    				max_i = key.y;
-    				max_j = key.x;
+    				max_i = key.x;
+    				max_j = key.y;
     				max_dir = d;
     				flag = false;
     			} else if(max_value < value) {
     				max_value = value;
-    				max_i = key.y;
-    				max_j = key.x;
+    				max_i = key.x;
+    				max_j = key.y;
     				max_dir = d;
     			}
     		}
@@ -200,6 +199,8 @@ public class AqoursSmart implements SliderPlayer {
 		}
 		for(Point key: opP.keySet()){
 			for(Move.Direction d: opP.get(key)){
+				// new curP
+				// new opP
 				alpha = max_Value(alpha, beta, curP, opP, depth) + moveOn(this.opplayer,d);
 				beta = Math.min(alpha, beta);
 				if(alpha >= beta){
@@ -234,15 +235,15 @@ public class AqoursSmart implements SliderPlayer {
 		}else{
 			for(Point key: curP.keySet()){
 				if(this.player == 'H'){
-					if(opP.containsKey(new Point(key.x-1,key.y))){
-						score += 10;
-					}else if(opP.containsKey(new Point(key.x,key.y+1))){
-						score -= 10;
-					}
-				}else{
 					if(opP.containsKey(new Point(key.x,key.y-1))){
 						score += 10;
 					}else if(opP.containsKey(new Point(key.x+1,key.y))){
+						score -= 10;
+					}
+				}else{
+					if(opP.containsKey(new Point(key.x-1,key.y))){
+						score += 10;
+					}else if(opP.containsKey(new Point(key.x,key.y+1))){
 						score -= 10;
 					}
 				}
