@@ -13,8 +13,17 @@ public class test {
 
 		c.put(a, 1);
 		HashMap<Point, Integer> d= new HashMap(c);
-		d.remove(a);
+		d.remove(new Point(1,0));
 		d.put(f, 3);
-		System.out.println(c.containsKey(a));
+		System.out.println(d.containsKey(a));
+		
+		Integer i =  null;
+		int j = 3;
+		if (i==null) {
+			i = 1;
+		}
+		System.out.println(Math.max(i, 2));
+
+		System.out.println(i+j);
 	}
 }

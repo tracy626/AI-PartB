@@ -68,31 +68,31 @@ public class AqoursSmart implements SliderPlayer {
 
 	@Override
 	public Move move() {
-		Move move;
+//		Move move;
 		getAvailMove(this.player, this.availMove);
 		if(this.player == 'H'){
 			getAvailMove('V', this.op_availMove);
 		}else{
 			getAvailMove('H', this.op_availMove);
 		}
-		for (Point key: this.availMove.keySet()) {
-			System.out.println(this.availMove.get(key));
-			if (this.availMove.get(key).isEmpty()) {
-				continue;
-			}
-//			printH(availMove);
-			move = new Move(key.x, key.y, this.availMove.get(key).get(0));
-			
-			Point npos = newPosition(key.x, key.y, move.d);
-			this.availMove.remove(key);
-			if (npos.x < dimension && npos.y < dimension) {
-				this.availMove.put(npos, new ArrayList<Move.Direction>());
-			}
-//			update(move);
-//			printH(availMove);
-			return move;
-		}
-		return null;
+//		for (Point key: this.availMove.keySet()) {
+//			System.out.println(this.availMove.get(key));
+//			if (this.availMove.get(key).isEmpty()) {
+//				continue;
+//			}
+////			printH(availMove);
+//			move = new Move(key.x, key.y, this.availMove.get(key).get(0));
+//			
+//			Point npos = newPosition(key.x, key.y, move.d);
+//			this.availMove.remove(key);
+//			if (npos.x < dimension && npos.y < dimension) {
+//				this.availMove.put(npos, new ArrayList<Move.Direction>());
+//			}
+////			update(move);
+////			printH(availMove);
+//			return move;
+//		}
+		return minimax_Decision(this.player);
 	}
 	
 	/**
@@ -165,13 +165,16 @@ public class AqoursSmart implements SliderPlayer {
     
     protected Move minimax_Decision(char player) {
     	Move move = null;
-    	int max_i = 0, max_j = 0, max_value = 0, value;
+    	Integer max_i = 0, max_j = 0, max_value = 0, value;
     	Move.Direction max_dir = null;
-    	
     	boolean flag=true;
+    	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(0,0,this.availMove, this.op_availMove, 2);
+    			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
+    			if (value == null) {
+    				return null;
+    			}
     			if (flag) {
     				max_value = value;
     				max_i = key.x;
@@ -188,40 +191,71 @@ public class AqoursSmart implements SliderPlayer {
     	}
     	if (!flag) {
     		move = new Move(max_i, max_j, max_dir);
+    		this.availMove.remove(new Point(max_i, max_j));
+    		Point newpos = newPosition(max_i, max_j, max_dir);
+    		if (newpos.x < this.dimension && newpos.y < this.dimension) {
+    			this.availMove.put(newpos, new ArrayList<Move.Direction>());
+    		}
+    		
     	}
     	return move;
     }
 
-	private int min_Value(int alpha, int beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth) {
+	private Integer min_Value(Integer alpha, Integer beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
+		HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			return eval(curP,opP);
+			return eval(curP,opP,dir);
 		}
 		for(Point key: opP.keySet()){
 			for(Move.Direction d: opP.get(key)){
-				// new curP
-				// new opP
-				alpha = max_Value(alpha, beta, curP, opP, depth) + moveOn(this.opplayer,d);
-				beta = Math.min(alpha, beta);
-				if(alpha >= beta){
+				ncurP = new HashMap(curP);
+				nopP = new HashMap(opP);
+				Point newpos = newPosition(key.x, key.y, d);
+				nopP.remove(key);
+				if (newpos.x < this.dimension && newpos.y < this.dimension){
+					nopP.put(newpos, new ArrayList<Move.Direction>());
+				}
+				getAvailMove(this.opplayer, nopP);
+				getAvailMove(this.player, ncurP);
+
+				if(beta == null) {
+					beta = max_Value(alpha, beta, ncurP, nopP, depth,dir);
+				}else{
+					beta = Math.min(max_Value(alpha, beta, ncurP, nopP, depth, dir), beta);
+				}
+				if(alpha != null && alpha >= beta){
 					return alpha;
 				}
 			}
 		}
+
 		return beta;
 	}
 
-	private int max_Value(int alpha, int beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth) {
+	private Integer max_Value(Integer alpha, Integer beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
+		HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			return eval(curP,opP);
+			return eval(curP,opP, dir);
 		}
 		for(Point key: curP.keySet()){
 			for(Move.Direction d: curP.get(key)){
-				// new opP, curP
-				beta = min_Value(alpha, beta, curP, opP, depth) + moveOn(this.player, d);
-				alpha = Math.max(alpha, beta);
-				if(alpha >= beta){
+				ncurP = new HashMap(curP);
+				nopP = new HashMap(opP);
+				Point newpos = newPosition(key.x, key.y, d);
+				ncurP.remove(key);
+				if (newpos.x < this.dimension && newpos.y < this.dimension) {
+					ncurP.put(newpos, new ArrayList<Move.Direction>());
+				}
+				getAvailMove(this.player, ncurP);
+				getAvailMove(this.opplayer, nopP);
+				if(alpha == null){
+					alpha = min_Value(alpha, beta, ncurP, nopP, depth, dir);
+				}else{
+					alpha = Math.max(alpha, min_Value(alpha, beta, ncurP, nopP, depth, dir));
+				}
+				if(beta !=null && alpha >= beta){
 					return beta;
 				}
 			}
@@ -229,67 +263,47 @@ public class AqoursSmart implements SliderPlayer {
 		return alpha;
 	}
 
-	private int eval(HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP) {
+	private int eval(HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, Move.Direction dir) {
 		int score = 0;
-		if(opP.size()<=curP.size()){
+		if(opP.size()<curP.size()){
 			score -=10;
-		}else{
-			for(Point key: curP.keySet()){
-				if(this.player == 'H'){
-					if(opP.containsKey(new Point(key.x,key.y-1))){
-						score += 10;
-					}else if(opP.containsKey(new Point(key.x+1,key.y))){
-						score -= 10;
-					}
+		}
+		for(Point key: curP.keySet()){
+			if(this.player == 'H'){
+				if(opP.containsKey(new Point(key.x,key.y-1))){
+					score += 40;
+				}else if(opP.containsKey(new Point(key.x+1,key.y))||block.contains(new Point(key.x+1,key.y))){
+					score -= 45;
+				}
+				if(dir == Move.Direction.RIGHT){
+					score += 20;
 				}else{
-					if(opP.containsKey(new Point(key.x-1,key.y))){
-						score += 10;
-					}else if(opP.containsKey(new Point(key.x,key.y+1))){
-						score -= 10;
-					}
+					score -= 50;
+				}
+			}else{
+				if(opP.containsKey(new Point(key.x-1,key.y))){
+					score += 40;
+				}else if(opP.containsKey(new Point(key.x,key.y+1))||block.contains(new Point(key.x,key.y+1))){
+					score -= 45;
+				}
+				if(dir == Move.Direction.UP){
+					score += 20;
+				}else{
+					score -= 50;
 				}
 			}
 		}
 		return score;
 	}
 	
-	private int moveOn(char player, Move.Direction d){
-		if (this.player == 'H'){
-			if(player == this.player){
-				if(d == Move.Direction.RIGHT){
-					return 20;
-				}else{
-					return -5;
-				}
-			}else{
-				if(d == Move.Direction.UP){
-					return -5;
-				}else{
-					return 20;
-				}
-			}
-		}else{
-			if(player == this.player){
-				if(d == Move.Direction.UP){
-					return 20;
-				}else{
-					return -5;
-				}
-			}else{
-				if(d == Move.Direction.RIGHT){
-					return -5;
-				}else{
-					return 20;
-				}
-			}
-		}
-	}
 
 	private boolean cutoff_test(int depth, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP) {
 		if (depth == 0){
 			return true;
 		}
-		// terminal win, lose;
+		if(curP.size() == 0 || opP.size() == 0){
+			return true;
+		}
 		return false;
 	}
 }
