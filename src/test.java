@@ -19,7 +19,9 @@ public class test {
 		
 		Integer i =  null;
 		int j = 3;
-		if (i==null) {
+		if (i > j) {
+			i = 1;
+		}else{
 			i = 1;
 		}
 		System.out.println(Math.max(i, 2));

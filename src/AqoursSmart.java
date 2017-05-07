@@ -50,8 +50,6 @@ public class AqoursSmart implements SliderPlayer {
 				i = 0;
 			}
 		}
-//		printH(availMove);
-//		printH(op_availMove);
 	}
 
 	@Override
@@ -70,29 +68,8 @@ public class AqoursSmart implements SliderPlayer {
 	public Move move() {
 //		Move move;
 		getAvailMove(this.player, this.availMove);
-		if(this.player == 'H'){
-			getAvailMove('V', this.op_availMove);
-		}else{
-			getAvailMove('H', this.op_availMove);
-		}
-//		for (Point key: this.availMove.keySet()) {
-//			System.out.println(this.availMove.get(key));
-//			if (this.availMove.get(key).isEmpty()) {
-//				continue;
-//			}
-////			printH(availMove);
-//			move = new Move(key.x, key.y, this.availMove.get(key).get(0));
-//			
-//			Point npos = newPosition(key.x, key.y, move.d);
-//			this.availMove.remove(key);
-//			if (npos.x < dimension && npos.y < dimension) {
-//				this.availMove.put(npos, new ArrayList<Move.Direction>());
-//			}
-////			update(move);
-////			printH(availMove);
-//			return move;
-//		}
-		return minimax_Decision(this.player);
+		getAvailMove(this.opplayer, this.op_availMove);
+	return minimax_Decision();
 	}
 	
 	/**
@@ -115,10 +92,8 @@ public class AqoursSmart implements SliderPlayer {
 //				availmove.get(key).remove(d);
 				Point npos = newPosition(key.x, key.y, d);
 				Object t = npos;
-//				System.out.println(this.availMove.containsKey(t)+" "+npos.x+ " "+npos.y);
 				if (inBound(npos.x, npos.y) && !this.availMove.containsKey(npos) && !this.op_availMove.containsKey(npos) && !block.contains(npos)) {
 					availmove.get(key).add(d);
-//					System.out.println("HERE??? "+key.x+" "+key.y+ ": "+d);
 				} else if (!inBound(npos.x, npos.y) && ((player == 'H' && d == Move.Direction.RIGHT) || (player == 'V' && d == Move.Direction.UP))){
 					availmove.get(key).add(d);
 				}
@@ -159,11 +134,7 @@ public class AqoursSmart implements SliderPlayer {
 		return pos;
     }
     
-    private Move bestMove() {
-    	return null;
-    }
-    
-    protected Move minimax_Decision(char player) {
+    protected Move minimax_Decision() {
     	Move move = null;
     	Integer max_i = 0, max_j = 0, max_value = 0, value;
     	Move.Direction max_dir = null;
@@ -172,16 +143,16 @@ public class AqoursSmart implements SliderPlayer {
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
     			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
-    			if (value == null) {
-    				return null;
-    			}
+//    			if (value == null) {
+//    				return null;
+//    			}
     			if (flag) {
     				max_value = value;
     				max_i = key.x;
     				max_j = key.y;
     				max_dir = d;
     				flag = false;
-    			} else if(max_value < value) {
+    			}else if(max_value != null && value != null && max_value < value) {
     				max_value = value;
     				max_i = key.x;
     				max_j = key.y;
@@ -272,8 +243,10 @@ public class AqoursSmart implements SliderPlayer {
 			if(this.player == 'H'){
 				if(opP.containsKey(new Point(key.x,key.y-1))){
 					score += 40;
-				}else if(opP.containsKey(new Point(key.x+1,key.y))||block.contains(new Point(key.x+1,key.y))){
+				}else if(opP.containsKey(new Point(key.x+1,key.y))){
 					score -= 45;
+				}else if(block.contains(new Point(key.x+1,key.y))){
+					score -= 15;
 				}
 				if(dir == Move.Direction.RIGHT){
 					score += 20;
@@ -283,8 +256,10 @@ public class AqoursSmart implements SliderPlayer {
 			}else{
 				if(opP.containsKey(new Point(key.x-1,key.y))){
 					score += 40;
-				}else if(opP.containsKey(new Point(key.x,key.y+1))||block.contains(new Point(key.x,key.y+1))){
+				}else if(opP.containsKey(new Point(key.x,key.y+1))){
 					score -= 45;
+				}else if(block.contains(new Point(key.x,key.y+1))){
+					score -= 15;
 				}
 				if(dir == Move.Direction.UP){
 					score += 20;
@@ -296,7 +271,6 @@ public class AqoursSmart implements SliderPlayer {
 		return score;
 	}
 	
-
 	private boolean cutoff_test(int depth, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP) {
 		if (depth == 0){
 			return true;
