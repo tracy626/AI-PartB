@@ -142,7 +142,7 @@ public class AqoursSmart implements SliderPlayer {
     	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
+    			value = min_Value(null,null,this.availMove, this.op_availMove, 3, d);
 //    			if (value == null) {
 //    				return null;
 //    			}
@@ -190,12 +190,12 @@ public class AqoursSmart implements SliderPlayer {
 				getAvailMove(this.opplayer, nopP);
 				getAvailMove(this.player, ncurP);
 
-				if(beta == null) {
+				if(beta == null || max_Value(alpha, beta, ncurP, nopP, depth, dir) == null) {
 					beta = max_Value(alpha, beta, ncurP, nopP, depth,dir);
 				}else{
 					beta = Math.min(max_Value(alpha, beta, ncurP, nopP, depth, dir), beta);
 				}
-				if(alpha != null && alpha >= beta){
+				if(alpha != null && beta != null && alpha >= beta){
 					return alpha;
 				}
 			}
@@ -221,12 +221,12 @@ public class AqoursSmart implements SliderPlayer {
 				}
 				getAvailMove(this.player, ncurP);
 				getAvailMove(this.opplayer, nopP);
-				if(alpha == null){
+				if(alpha == null || min_Value(alpha, beta, ncurP, nopP, depth, dir) == null){
 					alpha = min_Value(alpha, beta, ncurP, nopP, depth, dir);
 				}else{
 					alpha = Math.max(alpha, min_Value(alpha, beta, ncurP, nopP, depth, dir));
 				}
-				if(beta !=null && alpha >= beta){
+				if(beta !=null && alpha != null && alpha >= beta){
 					return beta;
 				}
 			}
