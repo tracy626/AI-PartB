@@ -12,7 +12,7 @@ import java.util.HashMap;
 import aiproj.slider.Move;
 import aiproj.slider.SliderPlayer;
 
-public class AqoursSmart implements SliderPlayer {
+public class AqoursStupid implements SliderPlayer {
 
 	private int dimension;
 	private char player;
@@ -142,7 +142,7 @@ public class AqoursSmart implements SliderPlayer {
     	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(null,null,this.availMove, this.op_availMove, 3, d);
+    			value = min_Value(null,null,this.availMove, this.op_availMove, 5, d);
 //    			if (value == null) {
 //    				return null;
 //    			}
@@ -241,32 +241,40 @@ public class AqoursSmart implements SliderPlayer {
 		}
 		for(Point key: curP.keySet()){
 			if(this.player == 'H'){
-				if(opP.containsKey(new Point(key.x,key.y-1))){
-					score += 40;
-				}else if(opP.containsKey(new Point(key.x+1,key.y))){
-					score -= 45;
-				}else if(block.contains(new Point(key.x+1,key.y))){
-					score -= 15;
+				for(Point opkey: opP.keySet()) {
+					if (opkey.y == key.y && opkey.x > key.x) {
+						score -= 20;
+					}
+					if (opkey.x == key.x && opkey.y < key.y) {
+						score += 20;
+					}
+ 				}
+				if(block.contains(new Point(key.x+1,key.y))){
+					score -= 25;
 				}
 				
 				if(dir == Move.Direction.RIGHT){
-					score += 20;
+					score += 40;
 				}else{
-					score -= 50;
+					score -= 30;
 				}
 			}else{
-				if(opP.containsKey(new Point(key.x-1,key.y))){
-					score += 40;
-				}else if(opP.containsKey(new Point(key.x,key.y+1))){
-					score -= 45;
-				}else if(block.contains(new Point(key.x,key.y+1))){
-					score -= 15;
-				}
 				
+				for(Point opkey: opP.keySet()) {
+					if (opkey.x == key.x && opkey.y > key.y) {
+						score -= 20;
+					}
+					if (opkey.y == key.y && opkey.x < key.x) {
+						score += 20;
+					}
+ 				}
+				if(block.contains(new Point(key.x,key.y+1))){
+					score -= 25;
+				}
 				if(dir == Move.Direction.UP){
-					score += 20;
+					score += 50;
 				}else{
-					score -= 50;
+					score -= 30;
 				}
 			}
 		}
