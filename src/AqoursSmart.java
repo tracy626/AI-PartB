@@ -19,6 +19,8 @@ public class AqoursSmart implements SliderPlayer {
 	private char opplayer;
 	private HashMap<Point, ArrayList<Move.Direction>> availMove, op_availMove;
 	private ArrayList<Point> block;
+	private TDleaf tdleaf;
+	private Integer[] temp_f, feature_a, feature_b;
 	
 	@Override
 	public void init(int dimension, String board, char player) {
@@ -39,7 +41,7 @@ public class AqoursSmart implements SliderPlayer {
 				if (board.charAt(count) == player) {
 					availMove.put(pos, new ArrayList<Move.Direction>());
 				} else if (board.charAt(count) == 'B') {
-					block.add(pos);
+					this.block.add(pos);
 				} else if (board.charAt(count) != '+') {
 					op_availMove.put(pos, new ArrayList<Move.Direction>());
 				}
@@ -50,6 +52,7 @@ public class AqoursSmart implements SliderPlayer {
 				i = 0;
 			}
 		}
+	this.tdleaf = new TDleaf(block);
 	}
 
 	@Override
@@ -69,7 +72,8 @@ public class AqoursSmart implements SliderPlayer {
 //		Move move;
 		getAvailMove(this.player, this.availMove);
 		getAvailMove(this.opplayer, this.op_availMove);
-	return minimax_Decision();
+		this.tdleaf.count += 1;
+		return minimax_Decision();
 	}
 	
 	/**
@@ -136,13 +140,14 @@ public class AqoursSmart implements SliderPlayer {
     
     protected Move minimax_Decision() {
     	Move move = null;
-    	Integer max_i = 0, max_j = 0, max_value = 0, value;
+    	Integer max_i = 0, max_j = 0;
+    	Double max_value = 0.0, value;
     	Move.Direction max_dir = null;
     	boolean flag=true;
     	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(null,null,this.availMove, this.op_availMove, 3, d);
+    			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
 //    			if (value == null) {
 //    				return null;
 //    			}
@@ -169,14 +174,17 @@ public class AqoursSmart implements SliderPlayer {
     		}
     		
     	}
+    	this.tdleaf.features.add(feature_a);
+		this.tdleaf.prove_w();
     	return move;
     }
 
-	private Integer min_Value(Integer alpha, Integer beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
+	private Double min_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
 		HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			return eval(curP,opP,dir);
+			this.temp_f = this.tdleaf.detect_f(curP, opP, dir, player);
+			return this.tdleaf.convert_r(this.temp_f);
 		}
 		for(Point key: opP.keySet()){
 			for(Move.Direction d: opP.get(key)){
@@ -192,8 +200,14 @@ public class AqoursSmart implements SliderPlayer {
 
 				if(beta == null || max_Value(alpha, beta, ncurP, nopP, depth, dir) == null) {
 					beta = max_Value(alpha, beta, ncurP, nopP, depth,dir);
+					this.feature_b = this.temp_f.clone();
+//					System.out.println(this.feature_b[0]);
 				}else{
-					beta = Math.min(max_Value(alpha, beta, ncurP, nopP, depth, dir), beta);
+//					beta = Math.min(max_Value(alpha, beta, ncurP, nopP, depth, dir), beta);
+					if(max_Value(alpha, beta, ncurP, nopP, depth, dir) < beta){
+						beta = max_Value(alpha, beta, ncurP, nopP, depth, dir);
+						this.feature_b = this.temp_f.clone();
+					}
 				}
 				if(alpha != null && beta != null && alpha >= beta){
 					return alpha;
@@ -204,11 +218,13 @@ public class AqoursSmart implements SliderPlayer {
 		return beta;
 	}
 
-	private Integer max_Value(Integer alpha, Integer beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
+	private Double max_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Move.Direction>> curP, HashMap<Point, ArrayList<Move.Direction>> opP, int depth, Move.Direction dir) {
 		HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			return eval(curP,opP, dir);
+			this.temp_f = this.tdleaf.detect_f(curP, opP, dir, player);
+			return this.tdleaf.convert_r(this.temp_f);
+//			return eval(curP,opP, dir);
 		}
 		for(Point key: curP.keySet()){
 			for(Move.Direction d: curP.get(key)){
@@ -223,8 +239,12 @@ public class AqoursSmart implements SliderPlayer {
 				getAvailMove(this.opplayer, nopP);
 				if(alpha == null || min_Value(alpha, beta, ncurP, nopP, depth, dir) == null){
 					alpha = min_Value(alpha, beta, ncurP, nopP, depth, dir);
+					this.feature_a = this.feature_b.clone();
 				}else{
-					alpha = Math.max(alpha, min_Value(alpha, beta, ncurP, nopP, depth, dir));
+					if(min_Value(alpha, beta, ncurP, nopP, depth, dir) > alpha){
+						alpha = min_Value(alpha, beta, ncurP, nopP, depth, dir);
+						this.feature_a = this.feature_b.clone();
+					}
 				}
 				if(beta !=null && alpha != null && alpha >= beta){
 					return beta;
@@ -239,6 +259,19 @@ public class AqoursSmart implements SliderPlayer {
 		if(opP.size()<curP.size()){
 			score -=10;
 		}
+		if(this.player == 'H') {
+			if(dir == Move.Direction.RIGHT){
+				score += 20;
+			}else{
+				score -= 50;
+			}
+		}else{
+			if(dir == Move.Direction.UP){
+				score += 20;
+			}else{
+				score -= 50;
+			}
+		}
 		for(Point key: curP.keySet()){
 			if(this.player == 'H'){
 				if(opP.containsKey(new Point(key.x,key.y-1))){
@@ -249,11 +282,7 @@ public class AqoursSmart implements SliderPlayer {
 					score -= 15;
 				}
 				
-				if(dir == Move.Direction.RIGHT){
-					score += 20;
-				}else{
-					score -= 50;
-				}
+				
 			}else{
 				if(opP.containsKey(new Point(key.x-1,key.y))){
 					score += 40;
