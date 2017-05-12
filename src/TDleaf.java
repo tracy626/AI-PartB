@@ -77,6 +77,10 @@ public class TDleaf {
 				weights[i] += ALPHA * this.sumDiff[i] * sumD;
 			}
 		}
+		for (double i: weights){
+			System.out.print(i+" ");
+		}
+		System.out.println();
 	}
 	
 	public double convert_r(Integer[] f){

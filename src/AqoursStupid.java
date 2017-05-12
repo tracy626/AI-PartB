@@ -142,7 +142,7 @@ public class AqoursStupid implements SliderPlayer {
     	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(null,null,this.availMove, this.op_availMove, 5, d);
+    			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
 //    			if (value == null) {
 //    				return null;
 //    			}
@@ -239,43 +239,40 @@ public class AqoursStupid implements SliderPlayer {
 		if(opP.size()<curP.size()){
 			score -=10;
 		}
+		if(this.player == 'V'){
+			if(dir == Move.Direction.UP){
+				score += 60;
+			}else{
+				score -= 20;
+			}
+		} else {
+			if(dir == Move.Direction.RIGHT){
+				score += 60;
+			}else{
+				score -= 20;
+			}
+		}
 		for(Point key: curP.keySet()){
 			if(this.player == 'H'){
-				for(Point opkey: opP.keySet()) {
-					if (opkey.y == key.y && opkey.x > key.x) {
-						score -= 20;
-					}
-					if (opkey.x == key.x && opkey.y < key.y) {
-						score += 20;
-					}
- 				}
-				if(block.contains(new Point(key.x+1,key.y))){
-					score -= 25;
-				}
-				
-				if(dir == Move.Direction.RIGHT){
-					score += 40;
-				}else{
+				if(opP.containsKey(new Point(key.x,key.y-1))){
+					score += 50;
+				}else if(opP.containsKey(new Point(key.x+1,key.y))){
+					score -= 40;
+				}else if(block.contains(new Point(key.x+1,key.y))){
 					score -= 30;
 				}
+				
+				
 			}else{
 				
-				for(Point opkey: opP.keySet()) {
-					if (opkey.x == key.x && opkey.y > key.y) {
-						score -= 20;
-					}
-					if (opkey.y == key.y && opkey.x < key.x) {
-						score += 20;
-					}
- 				}
-				if(block.contains(new Point(key.x,key.y+1))){
-					score -= 25;
-				}
-				if(dir == Move.Direction.UP){
+				if(opP.containsKey(new Point(key.x-1,key.y))){
 					score += 50;
-				}else{
+				}else if(opP.containsKey(new Point(key.x,key.y+1))){
+					score -= 40;
+				}else if(block.contains(new Point(key.x,key.y+1))){
 					score -= 30;
 				}
+				
 			}
 		}
 		return score;
