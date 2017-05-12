@@ -114,7 +114,7 @@ public class AqoursStupid implements SliderPlayer {
         return true;
     }
 
-    private void printH(HashMap<Point, ArrayList<Move.Direction>> h) {
+    private void printH2(HashMap<Point, ArrayList<Move.Direction>> h) {
     	System.out.println("Ava Move:");
     	for (Point key: h.keySet()) {
     		System.out.println(key.x + " " + key.y);

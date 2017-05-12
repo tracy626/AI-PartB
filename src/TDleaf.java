@@ -6,13 +6,13 @@ import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 
 public class TDleaf {
-	public double[] weights = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	public double[] weights = {10, 7, 1, 1, 1, 1, 1, 1, 1, 1};
 	public ArrayList<Integer[]> features;
 	private ArrayList<Double> diff;
 	private double sumD;
 	private ArrayList<Double> td;
-	private static final double ALPHA = 1.0;
-	private static final double LAMBDA = 0.7;
+	private static final double ALPHA = 0.2;
+	private static final double LAMBDA = 0.8;
 	public int count;
 	private ArrayList<Point> block;
 	private int dimension;
@@ -34,7 +34,7 @@ public class TDleaf {
 		for (Point key: curP.keySet()) {
 			if (player == 'H') {
 				feature[1] += key.x;
-				System.out.println(key.x + " "+key.y+": "+feature[1]+" ");
+//				System.out.println(key.x + " "+key.y+": "+feature[1]+" ");
 				for(int i = key.x + 1; i < this.dimension; i++){
 					if(curP.containsKey(new Point(i, key.y))){
 						feature[2] -= 1;
@@ -90,47 +90,10 @@ public class TDleaf {
 				}
 			}
 		}
-//		if(opP.size()<curP.size()){
-//			feature[0] -=1;
+//		for(int i=0; i < 10; i++){
+//			System.out.print(feature[i]+ " ");
 //		}
-//		if(player == 'H') {
-//			if(dir == Direction.RIGHT){
-//				feature[1] += 1;
-//			}else{
-//				feature[2] -= 1;
-//			}
-//		}else{
-//			if(dir == Direction.UP){
-//				feature[1] += 1;
-//			}else{
-//				feature[2] -= 1;
-//			}
-//		}
-//		for(Point key: curP.keySet()){
-//			if(player == 'H'){
-//				if(opP.containsKey(new Point(key.x,key.y-1))){
-//					feature[3] += 1;
-//				}else if(opP.containsKey(new Point(key.x+1,key.y))){
-//					feature[4] -= 1;
-//				}else if(this.block.contains(new Point(key.x+1,key.y))){
-//					feature[5] -= 1;
-//				}
-//			}else{
-//				if(opP.containsKey(new Point(key.x-1,key.y))){
-//					feature[3] += 1;
-//				}else if(opP.containsKey(new Point(key.x,key.y+1))){
-//					feature[4] -= 1;
-//				}else if(this.block.contains(new Point(key.x,key.y+1))){
-//					feature[5] -= 1;
-//				}
-//				
-//			}
-//		}
-//		features.add(feature);
-		for(int i=0; i < 10; i++){
-			System.out.print(feature[i]+ " ");
-		}
-		System.out.println();
+//		System.out.println();
 		return feature;
 	}
 	
