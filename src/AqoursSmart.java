@@ -52,7 +52,7 @@ public class AqoursSmart implements SliderPlayer {
 				i = 0;
 			}
 		}
-	this.tdleaf = new TDleaf(block);
+	this.tdleaf = new TDleaf(this.block, this.dimension);
 	}
 
 	@Override
@@ -70,10 +70,10 @@ public class AqoursSmart implements SliderPlayer {
 	@Override
 	public Move move() {
 //		Move move;
-		System.out.println("ava");
-		printH(this.availMove);
-		System.out.println("op");
-		printH(this.op_availMove);
+//		System.out.println("ava");
+//		printH(this.availMove);
+//		System.out.println("op");
+//		printH(this.op_availMove);
 		getAvailMove(this.player, this.availMove);
 		getAvailMove(this.opplayer, this.op_availMove);
 		this.tdleaf.count += 1;
@@ -122,11 +122,23 @@ public class AqoursSmart implements SliderPlayer {
         return true;
     }
 
-    private void printH(HashMap<Point, ArrayList<Move.Direction>> h) {
-    	System.out.println("Ava Move:");
-    	for (Point key: h.keySet()) {
-    		System.out.println(key.x + " " + key.y);
+    private void printH(HashMap<Point, ArrayList<Move.Direction>> op, HashMap<Point, ArrayList<Move.Direction>> cur) {
+    	System.out.println("========= TEST Board: ==========");
+    	for (int j=dimension-1; j>=0; j--) {
+    		for (int i=0; i<dimension; i++) {
+    			if(op.containsKey(new Point(i,j))){
+    				System.out.print(this.opplayer+" ");
+    			}else if(cur.containsKey(new Point(i,j))){
+    				System.out.print(this.player+" ");
+    			}else if(block.contains(new Point(i,j))){
+    				System.out.print("B ");
+    			}else{
+    				System.out.print("+ ");
+    			}
+    		}
+    		System.out.println();
     	}
+		System.out.println("=========== TEST END ============");
     }
     
     private Point newPosition(int i, int j, Move.Direction d) {
@@ -143,6 +155,7 @@ public class AqoursSmart implements SliderPlayer {
     }
     
     protected Move minimax_Decision() {
+    	HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
     	Move move = null;
     	Integer max_i = 0, max_j = 0;
     	Double max_value = 0.0, value;
@@ -151,7 +164,16 @@ public class AqoursSmart implements SliderPlayer {
     	
     	for (Point key: this.availMove.keySet()) {
     		for (Move.Direction d: this.availMove.get(key)) {
-    			value = min_Value(null,null,this.availMove, this.op_availMove, 4, d);
+    			ncurP = new HashMap(this.availMove);
+				nopP = new HashMap(this.op_availMove);
+				Point newpos = newPosition(key.x, key.y, d);
+				ncurP.remove(key);
+				if (newpos.x < this.dimension && newpos.y < this.dimension){
+					ncurP.put(newpos, new ArrayList<Move.Direction>());
+				}
+				getAvailMove(this.player, ncurP);
+				getAvailMove(this.opplayer, nopP);
+    			value = min_Value(null, null, ncurP, nopP, 4, d);
 //    			if (value == null) {
 //    				return null;
 //    			}
@@ -226,6 +248,8 @@ public class AqoursSmart implements SliderPlayer {
 		HashMap<Point, ArrayList<Move.Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
+			printH(opP,curP);
+			
 			this.temp_f = this.tdleaf.detect_f(curP, opP, dir, player);
 			return this.tdleaf.convert_r(this.temp_f);
 //			return eval(curP,opP, dir);
