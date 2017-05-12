@@ -6,7 +6,7 @@ import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 
 public class TDleaf {
-	public double[] weights = {10, 7, 1, 1, 1, 1, 1, 1, 1, 1};
+	public double[] weights = {7, 7, 1, 1, 1, 1, 1, 1, 1, 1};
 	public ArrayList<Integer[]> features;
 	private ArrayList<Double> diff;
 	private double sumD;
