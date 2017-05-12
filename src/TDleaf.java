@@ -6,20 +6,21 @@ import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 
 public class TDleaf {
-	public double[] weights = {1, 6, 2, 5, 4, 3};
+	public double[] weights = {1, 10, 2, 8, 4, 3};
 	public ArrayList<Integer[]> features;
 	private ArrayList<Double> diff;
-	private double[] sumDiff;
 	private double sumD;
-	private static final double ALPHA = 0.1;
+	private double sum_lambda;
+	private static final double ALPHA = 0.3;
+	private static final double LAMBDA = 0.8;
 	public int count;
 	private ArrayList<Point> block;
 	
 	public TDleaf(ArrayList<Point> block) {
 		this.features = new ArrayList<Integer[]>();
 		this.diff = new ArrayList<Double>();
-		this.sumDiff = new double[6];
 		this.sumD = 0;
+		this.sum_lambda = 0;
 		this.count = 0;
 		this.block = block;
 	}
@@ -67,14 +68,21 @@ public class TDleaf {
 	}
 	
 	public void prove_w() {
-		this.diff.add(1 - (Math.tanh(convert_r(features.get(count - 1))))*(Math.tanh(convert_r(features.get(count - 1)))));
-		if(count == 1){
-			this.sumD += Math.tanh(convert_r(features.get(count - 1)));
-		}else{
-			this.sumD += Math.tanh(convert_r(features.get(count - 1))) - Math.tanh(convert_r(features.get(count - 2)));
+		this.diff.add(1 - Math.pow(tanh(count - 1), 2));
+		if(count > 1){
+//			this.sumD += tanh(count - 1);
+//			this.sum_lambda += Math.pow(1/LAMBDA, count -1);
+		//Math.pow(LAMBDA, count - 2)*
+			this.sumD += Math.pow(LAMBDA, count - 2) * (tanh(count - 1) - tanh(count - 2));
+//			this.sum_lambda += Math.pow(1/LAMBDA, count -1);
+			
 			for(int i=0; i < 6; i++){
-				this.sumDiff[i] += this.diff.get(count - 1)*features.get(count - 1)[i];
-				weights[i] += ALPHA * this.sumDiff[i] * sumD;
+				double sumDiff = 0;
+				for(int j=0; j < count-1; j++){
+					sumDiff += this.diff.get(count - 1) * features.get(count - 1)[i] * Math.pow(LAMBDA, 1-i) * this.sumD;
+				}
+//				this.sumDiff[i] += this.diff.get(count - 1)*features.get(count - 1)[i];
+				weights[i] += ALPHA * sumDiff;
 			}
 		}
 		for (double i: weights){
@@ -90,5 +98,9 @@ public class TDleaf {
 			eval += f[i] * weights[i];
 		}
 		return eval;
+	}
+	
+	public double tanh(int n) {
+		return Math.tanh(convert_r(features.get(n)));
 	}
 }

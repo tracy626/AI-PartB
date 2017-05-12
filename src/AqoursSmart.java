@@ -70,6 +70,10 @@ public class AqoursSmart implements SliderPlayer {
 	@Override
 	public Move move() {
 //		Move move;
+		System.out.println("ava");
+		printH(this.availMove);
+		System.out.println("op");
+		printH(this.op_availMove);
 		getAvailMove(this.player, this.availMove);
 		getAvailMove(this.opplayer, this.op_availMove);
 		this.tdleaf.count += 1;
