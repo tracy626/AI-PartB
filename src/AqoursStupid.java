@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import aiproj.slider.Move;
 import aiproj.slider.SliderPlayer;
+import aiproj.slider.Move.Direction;
 
 public class AqoursStupid implements SliderPlayer {
 
@@ -114,11 +115,35 @@ public class AqoursStupid implements SliderPlayer {
         return true;
     }
 
-    private void printH2(HashMap<Point, ArrayList<Move.Direction>> h) {
+    
+    private void printH2(HashMap<Point, ArrayList<Direction>> h) {
     	System.out.println("Ava Move:");
     	for (Point key: h.keySet()) {
-    		System.out.println(key.x + " " + key.y);
+    		System.out.print(key.x + " " + key.y+": ");
+    		for(Direction d: h.get(key)){
+    			System.out.print(d+" ");
+    		}
+    		System.out.println();
     	}
+    }
+    
+    private void printH(HashMap<Point, ArrayList<Direction>> op, HashMap<Point, ArrayList<Direction>> cur) {
+    	System.out.println("========= TEST Board: ==========");
+    	for (int j=dimension-1; j>=0; j--) {
+    		for (int i=0; i<dimension; i++) {
+    			if(op.containsKey(new Point(i,j))){
+    				System.out.print(this.opplayer+" ");
+    			}else if(cur.containsKey(new Point(i,j))){
+    				System.out.print(this.player+" ");
+    			}else if(block.contains(new Point(i,j))){
+    				System.out.print("B ");
+    			}else{
+    				System.out.print("+ ");
+    			}
+    		}
+    		System.out.println();
+    	}
+		System.out.println("=========== TEST END ============");
     }
     
     private Point newPosition(int i, int j, Move.Direction d) {

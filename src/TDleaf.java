@@ -1,3 +1,10 @@
+/**
+ * Yue Fang 715889
+ * Zhe Tang 743398
+ * COMP30024 Artificial Intelligence
+ * Project Part B
+ */
+
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +41,6 @@ public class TDleaf {
 		for (Point key: curP.keySet()) {
 			if (player == 'H') {
 				feature[1] += key.x;
-//				System.out.println(key.x + " "+key.y+": "+feature[1]+" ");
 				for(int i = key.x + 1; i < this.dimension; i++){
 					if(curP.containsKey(new Point(i, key.y))){
 						feature[2] -= 1;
@@ -90,22 +96,13 @@ public class TDleaf {
 				}
 			}
 		}
-//		for(int i=0; i < 10; i++){
-//			System.out.print(feature[i]+ " ");
-//		}
-//		System.out.println();
 		return feature;
 	}
 	
 	public void prove_w() {
 		this.diff.add(1 - Math.pow(tanh(count - 1), 2));
 		if(count > 1){
-//			this.sumD += tanh(count - 1);
-//			this.sum_lambda += Math.pow(1/LAMBDA, count -1);
-		//Math.pow(LAMBDA, count - 2)*
 			this.td.add(tanh(count - 1) - tanh(count - 2));
-//			this.sumD += Math.pow(LAMBDA, count - 2) * (tanh(count - 1) - tanh(count - 2));
-//			this.sum_lambda += Math.pow(1/LAMBDA, count -1);
 			
 			for(int i=0; i < weights.length; i++){
 				double sumDiff = 0;
@@ -116,7 +113,6 @@ public class TDleaf {
 					}
 					sumDiff += this.diff.get(j) * features.get(j)[i] * sumD;
 				}
-//				this.sumDiff[i] += this.diff.get(count - 1)*features.get(count - 1)[i];
 				weights[i] += ALPHA * sumDiff;
 			}
 		}
@@ -129,7 +125,6 @@ public class TDleaf {
 	public double convert_r(Integer[] f){
 		double eval = 0;
 		for(int i=0; i < weights.length; i++){
-//			System.out.println(count+ " "+features.size());
 			eval += f[i] * weights[i];
 		}
 		return eval;
