@@ -13,8 +13,10 @@ import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 import aiproj.slider.SliderPlayer;
 
+/**
+ * class for our slideron AI
+ */
 public class AqoursSmart implements SliderPlayer {
-
 	private int dimension;
 	private char player;
 	private char opplayer;
@@ -23,6 +25,15 @@ public class AqoursSmart implements SliderPlayer {
 	private TDleaf tdleaf;
 	private Integer[] temp_f, feature_a, feature_b;
 	
+	/** 
+	 * Override the init function in SliderPlayer.
+	 * 
+	 * @param dimension The width and height of the board in cells
+	 * @param board A string representation of the initial state of the board,
+	 * as described in the part B specification
+	 * @param player 'H' or 'V', corresponding to which pieces the player will
+	 * control for this game ('H' = Horizontal, 'V' = Vertical)
+	 */
 	@Override
 	public void init(int dimension, String board, char player) {
 		this.dimension = dimension;
@@ -56,6 +67,13 @@ public class AqoursSmart implements SliderPlayer {
 	this.tdleaf = new TDleaf(this.block, this.dimension);
 	}
 
+	/**
+	 * Override the update function in SliderPlayer.
+	 *
+	 * @param move A Move object representing the previous move made by the 
+	 * opponent, which may be null (indicating a pass). Also, before the first
+	 * move at the beginning of the game, move = null.
+	 */
 	@Override
 	public void update(Move move) {
 		if (move != null) {
@@ -68,6 +86,12 @@ public class AqoursSmart implements SliderPlayer {
 		}
 	}
 
+	/** 
+	 * Override the move function in SliderPlayer.
+	 *
+	 * @return a Move object representing the move you would like to make
+	 * at this point of the game, or null if there are no legal moves.
+	 */
 	@Override
 	public Move move() {
 		getAvailMove(this.player, this.availMove, this.op_availMove);
@@ -116,6 +140,13 @@ public class AqoursSmart implements SliderPlayer {
         return true;
     }
   
+    /**
+     * a helper function to create the new point of the given position and direction
+     * @param i x in Cartesian
+     * @param j y in 
+	 * @param d Direction
+     * @return Point of the new position
+     */
     private Point newPosition(int i, int j, Direction d) {
     	int toi = i, toj = j;
     	Point pos;
@@ -128,7 +159,11 @@ public class AqoursSmart implements SliderPlayer {
     	pos = new Point(toi, toj);
 		return pos;
     }
-    
+  
+    /**
+     * Make decision of Minimax-algorithms
+     * @return a legal move
+     */
     protected Move minimax_Decision() {
     	HashMap<Point, ArrayList<Direction>> ncurP, nopP;
     	Move move = null;
@@ -178,6 +213,16 @@ public class AqoursSmart implements SliderPlayer {
     	return move;
     }
 
+    /**
+     * Min-value function
+     * @param alpha a number help to pruning the useless path
+     * @param beta a number help to pruning the useless path
+     * @param curP the HashMap contain the player's pieces position map to the available move's direction
+     * @param opP the HashMap contain the opponent player's pieces position and its available move
+     * @param depth a number represent the depth of minimax searching
+	 * @param d Direction
+     * @return a double
+     */
 	private Double min_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
