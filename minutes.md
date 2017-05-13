@@ -18,3 +18,19 @@ and modify the data structure we used.
 5.7 5.00 p.m. - 6.30 p.m., 7.30 p.m. - 11.00 p.m.
 Almost finish Minimax algorithms and fix some bugs.
 For the heuristic, we decided to use TDLeaf(lambda), need more discussion on it.
+
+#meeting 5
+5.9 6.30 p.m. - 12.00 a.m.
+Fix bug and discuss tdleaf.
+
+#meeting 6
+5.10 4.30 p.m. - 6.00 p.m., 8.00 p.m. - 11.00 p.m.
+Start to implement TDleaf.
+
+#meeting 7
+5.11 8.00 p.m. - 10.30 p.m.
+Partly finish tdleaf according to the formula.
+
+#meeting 8
+5.12 2.50 p.m. - 5.15 p.m., 7.00 p.m. - 12.30 a.m.
+Modify tdleaf and improve eval function.
