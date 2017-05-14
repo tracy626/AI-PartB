@@ -12,28 +12,42 @@ import java.util.HashMap;
 import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 
+/**
+ * class of tdleaf(lambda) for our AI to choose next move
+ */
 public class TDleaf {
 	public double[] weights = {7, 7, 1, 1, 1, 1, 1, 1, 1, 1};
-	public ArrayList<Integer[]> features;
-	private ArrayList<Double> diff;
-	private double sumD;
-	private ArrayList<Double> td;
-	private static final double ALPHA = 0.2;
-	private static final double LAMBDA = 0.8;
-	public int count;
-	private ArrayList<Point> block;
-	private int dimension;
+	public ArrayList<Integer[]> features; 
+	// ArrayList to store all the features of the leaves state which determined the moves in happened states
+	private ArrayList<Double> diff; 
+	// ArrayList to store the differential number of the d[r(si,w)]/d[wj] part, detail  in our comment.txt
+	private ArrayList<Double> td; // ArrayList to store the temporal differences between states
+	private static final double ALPHA = 0.2; // Learning rate in tdleaf(lambda)
+	private static final double LAMBDA = 0.8; // Lambda value of tdleaf(lambda)
+	public int count; // count of current number of state from the begin of the game
+	private ArrayList<Point> block; // ArrayList stored the block's position
+	private int dimension; // Number of the dimension of current game
 	
+	/**
+     * default constructor, read dimension and the block details
+     */
 	public TDleaf(ArrayList<Point> block, int dimension) {
 		this.features = new ArrayList<Integer[]>();
 		this.diff = new ArrayList<Double>();
 		this.td = new ArrayList<Double>();
-		this.sumD = 0;
 		this.count = 0;
 		this.block = block;
 		this.dimension = dimension;
 	}
 
+	/**
+     * get features of player using the given HashMap as the state of game,
+     * @param curP the HashMap store the player's pieces position map to the available move's direction
+     * @param opP the HashMap store the opponent player's pieces position and its available move
+     * @param dir Direction
+     * @param player our AI player
+     * @return Integer array contain all feature points
+     */
 	public Integer[] detect_f(HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, Direction dir, char player) {
 		Integer[] feature = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		feature[0] += this.dimension * (this.dimension - 1 - curP.size());
@@ -99,20 +113,28 @@ public class TDleaf {
 		return feature;
 	}
 	
+	/**
+	 * a helper function to update vector w according to the formula of tdleaf(lambda)
+	 */
 	public void prove_w() {
 		this.diff.add(1 - Math.pow(tanh(count - 1), 2));
 		if(count > 1){
+			// temperal difference of state i-1 equal to reward of i substance reward of i-1
+			// since count is recorded from one but the index of ArrayList counts from 0
+			// we use reward of count-1 minus reward of count-2
 			this.td.add(tanh(count - 1) - tanh(count - 2));
-			
 			for(int i=0; i < weights.length; i++){
+				// initial sum of differential of reward of determined leaf of state j to w(i) times sum of d
 				double sumDiff = 0;
 				for(int j=0; j < count - 1; j++){
+					// initial sum of lambda's power of k-j times dj
 					double sumD = 0;
 					for(int k=j; k < count - 1; k++){
 						sumD += Math.pow(LAMBDA, k - j) * this.td.get(j);
 					}
 					sumDiff += this.diff.get(j) * features.get(j)[i] * sumD;
 				}
+				// update the vector w
 				weights[i] += ALPHA * sumDiff;
 			}
 		}
@@ -122,6 +144,11 @@ public class TDleaf {
 		System.out.println();
 	}
 	
+	/**
+	 * a helper function to calculate evaluation value
+	 * @param f features
+	 * @return a double, the value of the evaluation
+	 */
 	public double convert_r(Integer[] f){
 		double eval = 0;
 		for(int i=0; i < weights.length; i++){
@@ -130,7 +157,13 @@ public class TDleaf {
 		return eval;
 	}
 	
+	/**
+	 * a helper function to squash the evaluation score into range of [-1,+1] using tanh(x)
+	 * @param n the number of current state
+	 * @return a double between -1 and +1 
+	 */
 	public double tanh(int n) {
+		// first use conver_r to calculate the evaluation value
 		return Math.tanh(convert_r(features.get(n)));
 	}
 }

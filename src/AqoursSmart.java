@@ -14,16 +14,18 @@ import aiproj.slider.Move.Direction;
 import aiproj.slider.SliderPlayer;
 
 /**
- * class for our slideron AI
+ * class of our slideron AI
  */
 public class AqoursSmart implements SliderPlayer {
 	private int dimension;
 	private char player;
 	private char opplayer;
-	private HashMap<Point, ArrayList<Direction>> availMove, op_availMove;
-	private ArrayList<Point> block;
+	private HashMap<Point, ArrayList<Direction>> availMove, op_availMove; 
+	// HashMaps to store position and available move of player and opponent player
+	private ArrayList<Point> block; // ArrayList to store the position of block(s)
 	private TDleaf tdleaf;
 	private Integer[] temp_f, feature_a, feature_b;
+	// Integer arrays to store the features of the state help to do alpha-beta pruning in minimax research
 	
 	/** 
 	 * Override the init function in SliderPlayer.
@@ -130,7 +132,7 @@ public class AqoursSmart implements SliderPlayer {
     /**
      * a helper function to check whether a location is in bound
      * @param row row number
-     * @param col col number
+     * @param col column number
      * @return true or false
      */
     private boolean inBound(int row, int col){
@@ -217,11 +219,11 @@ public class AqoursSmart implements SliderPlayer {
      * Min-value function
      * @param alpha a number help to pruning the useless path
      * @param beta a number help to pruning the useless path
-     * @param curP the HashMap contain the player's pieces position map to the available move's direction
-     * @param opP the HashMap contain the opponent player's pieces position and its available move
+     * @param curP the HashMap store the player's pieces position map to the available move's direction
+     * @param opP the HashMap store the opponent player's pieces position and its available move
      * @param depth a number represent the depth of minimax searching
 	 * @param d Direction
-     * @return a double
+     * @return a double number
      */
 	private Double min_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
@@ -262,6 +264,16 @@ public class AqoursSmart implements SliderPlayer {
 		return beta;
 	}
 
+    /**
+     * Max-value function
+     * @param alpha a number help to pruning the useless path
+     * @param beta a number help to pruning the useless path
+     * @param curP the HashMap store the player's pieces position map to the available move's direction
+     * @param opP the HashMap store the opponent player's pieces position and its available move
+     * @param depth a number represent the depth of minimax searching
+	 * @param d Direction
+     * @return a double number
+     */
 	private Double max_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
@@ -298,7 +310,14 @@ public class AqoursSmart implements SliderPlayer {
 		}
 		return alpha;
 	}
-	
+
+    /**
+     * a helper function to determine whether the board should be cot off
+     * @param depth a number represent the depth of minimax searching
+     * @param curP the HashMap contain the player's pieces position map to the available move's direction
+	 * @param opP the HashMap contain the opponent player's pieces position and its available move
+     * @return true or false
+     */
 	private boolean cutoff_test(int depth, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP) {
 		if (depth == 0){
 			return true;
