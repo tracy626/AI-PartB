@@ -24,7 +24,7 @@ public class AqoursSmart implements SliderPlayer {
 	// HashMaps to store position and available move of player and opponent player
 	private ArrayList<Point> block; // ArrayList to store the position of block(s)
 	private TDleaf tdleaf;
-	private Integer[] temp_f, feature_a, feature_b;
+	private Integer[] temp_f;
 	// Integer arrays to store the features of the state help to do alpha-beta pruning in minimax research
 	
 	/** 
@@ -168,9 +168,10 @@ public class AqoursSmart implements SliderPlayer {
      */
     protected Move minimax_Decision() {
     	HashMap<Point, ArrayList<Direction>> ncurP, nopP;
+    	Integer[] feature = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     	Move move = null;
     	Integer max_i = 0, max_j = 0;
-    	Double max_value = 0.0, value;
+    	Pair<Double, Integer[]> max_value = new Pair(Double.NEGATIVE_INFINITY, null), value;
     	Direction max_dir = null;
     	boolean flag=true;
     	
@@ -186,15 +187,15 @@ public class AqoursSmart implements SliderPlayer {
 				}
 				getAvailMove(this.player, ncurP, nopP);
 				getAvailMove(this.opplayer, nopP, ncurP);
-    			value = min_Value(null, null, ncurP, nopP, 4, d);
+    			value = min_Value(new Pair(Double.NEGATIVE_INFINITY, null), new Pair(Double.POSITIVE_INFINITY, null), ncurP, nopP, 6, d);
     			if (flag) {
-    				max_value = value;
+					max_value = new Pair(value.getValue(), value.getFeature().clone());
     				max_i = key.x;
     				max_j = key.y;
     				max_dir = d;
     				flag = false;
-    			}else if(max_value != null && value != null && max_value < value) {
-    				max_value = value;
+    			}else if(max_value.getValue() < value.getValue()) {
+    				max_value = new Pair(value.getValue(), value.getFeature().clone());
     				max_i = key.x;
     				max_j = key.y;
     				max_dir = d;
@@ -210,7 +211,10 @@ public class AqoursSmart implements SliderPlayer {
     		}
     		
     	}
-    	this.tdleaf.features.add(feature_a);
+    	if(max_value.getFeature()==null){
+    		max_value.setFeature(this.tdleaf.detect_f(this.availMove, this.op_availMove, player));
+		}
+		this.tdleaf.features.add(max_value.getFeature().clone());
 		this.tdleaf.prove_w();
     	return move;
     }
@@ -225,12 +229,12 @@ public class AqoursSmart implements SliderPlayer {
 	 * @param d Direction
      * @return a double number
      */
-	private Double min_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
+	private Pair<Double, Integer[]> min_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			this.temp_f = this.tdleaf.detect_f(curP, opP, dir, player);
-			return this.tdleaf.convert_r(this.temp_f);
+			this.temp_f = this.tdleaf.detect_f(curP, opP, player);
+			return new Pair(this.tdleaf.convert_r(this.temp_f), this.temp_f.clone());
 		}
 		for(Point key: opP.keySet()){
 			for(Direction d: opP.get(key)){
@@ -245,21 +249,23 @@ public class AqoursSmart implements SliderPlayer {
 
 				getAvailMove(this.opplayer, nopP, ncurP);
 				getAvailMove(this.player, ncurP, nopP);
-
-				Double max_v = max_Value(alpha, beta, ncurP, nopP, depth, dir);
-				if(beta == null || max_v == null) {
-					beta = max_v;
-					this.feature_b = this.temp_f.clone();
-				}else{
-					if(max_v < beta){
-						beta = max_v;
-						this.feature_b = this.temp_f.clone();
-					}
+//				printH(nopP, ncurP);
+				Pair<Double, Integer[]> max_v = max_Value(alpha, beta, ncurP, nopP, depth, dir);
+//				System.out.println(max_v.getValue() + " " + max_v.getFeature()[1]);
+				
+				if(max_v.getValue() < beta.getValue()){
+					beta = new Pair(max_v.getValue(), max_v.getFeature().clone());
 				}
-				if(alpha != null && beta != null && alpha >= beta){
+				if(alpha.getValue() >= beta.getValue()){
+					if(alpha.getFeature()==null){
+						alpha.setFeature(this.tdleaf.detect_f(curP, opP, player));
+					}
 					return alpha;
 				}
 			}
+		}
+		if(beta.getFeature()==null){
+			beta.setFeature(this.tdleaf.detect_f(curP, opP, player));
 		}
 		return beta;
 	}
@@ -274,12 +280,13 @@ public class AqoursSmart implements SliderPlayer {
 	 * @param d Direction
      * @return a double number
      */
-	private Double max_Value(Double alpha, Double beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
+	private Pair<Double, Integer[]> max_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
-			this.temp_f = this.tdleaf.detect_f(curP, opP, dir, player);
-			return this.tdleaf.convert_r(this.temp_f);
+			this.temp_f = this.tdleaf.detect_f(curP, opP, player);
+//			System.out.println(temp_f[0]);
+			return new Pair(this.tdleaf.convert_r(this.temp_f), this.temp_f.clone());
 		}
 		for(Point key: curP.keySet()){
 			for(Direction d: curP.get(key)){
@@ -293,20 +300,21 @@ public class AqoursSmart implements SliderPlayer {
 				}
 				getAvailMove(this.player, ncurP, nopP);
 				getAvailMove(this.opplayer, nopP, ncurP);
-				Double min_v = min_Value(alpha, beta, ncurP, nopP, depth, dir);
-				if(alpha == null || min_v == null){
-					alpha = min_v;
-					this.feature_a = this.feature_b.clone();
-				}else{
-					if(min_v > alpha){
-						alpha = min_v;
-						this.feature_a = this.feature_b.clone();
-					}
+				Pair<Double, Integer[]> min_v = min_Value(alpha, beta, ncurP, nopP, depth, dir);
+				
+				if(min_v.getValue() > alpha.getValue()){
+					alpha = new Pair(min_v.getValue(), min_v.getFeature().clone());
 				}
-				if(beta !=null && alpha != null && alpha >= beta){
+				if(alpha.getValue() >= beta.getValue()){
+					if(beta.getFeature()==null){
+						beta.setFeature(this.tdleaf.detect_f(curP, opP, player));
+					}
 					return beta;
 				}
 			}
+		}
+		if(alpha.getFeature()==null){
+			alpha.setFeature(this.tdleaf.detect_f(curP, opP, player));
 		}
 		return alpha;
 	}

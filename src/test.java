@@ -12,7 +12,9 @@ public class test {
 		HashMap<Point, Integer> c = new HashMap();
 		Integer[] array = {1, 2, 3}; 
 		Integer[] array_c = array.clone();
-
+		
+		Pair<Double, Integer[]> d = new Pair<Double, Integer[]>(1.0,array);
+		
 //		c.put(a, 1);
 //		HashMap<Point, Integer> d= new HashMap(c);
 //		d.remove(new Point(1,0));
@@ -30,7 +32,10 @@ public class test {
 //
 //		System.out.println(i+j);
 		
-		array_c[0] = 4;
+		array[0] = 4;
 		System.out.println(array[0]+" "+array_c[0]);
+		System.out.println(d.getFeature()[0]);
 	}
+	
+	
 }
