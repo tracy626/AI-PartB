@@ -3,7 +3,7 @@ Yue Fang 715889
 Zhe Tang 743398
 Project Part B Report
 
-In this project, we have used Minimax with alpha-beta pruning, and updated weights by TDLeaf(λ) to evaluate the score of each state. We created AqoursSmart Class as agen, TDleaf Class and a Pair Class.
+In this project, we have used Minimax with alpha-beta pruning, and updated weights by TDLeaf(λ) to evaluate the score of each state.
 
 After our test, we decide to use depth equal to 4 in Minimax, it has best response of result of game and meets the constraints of time and memory limits.
 In order to saving time and space we chose alpha-beta pruning instead of original Minimax search.
