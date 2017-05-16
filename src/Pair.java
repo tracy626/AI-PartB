@@ -1,3 +1,14 @@
+/**
+ * Yue Fang 715889
+ * Zhe Tang 743398
+ * COMP30024 Artificial Intelligence
+ * Project Part B
+ */
+
+/**
+ * Pair class, help us to return a double and a Integer[] of features of
+ * the cut off or determined leaf
+ */
 public class Pair<T1, T2>{
 	private T1 value;
 	private T2 feature;

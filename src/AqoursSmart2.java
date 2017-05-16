@@ -16,7 +16,7 @@ import aiproj.slider.SliderPlayer;
 /**
  * class of our slideron AI
  */
-public class AqoursSmart implements SliderPlayer {
+public class AqoursSmart2 implements SliderPlayer {
 	private int dimension;
 	private char player;
 	private char opplayer;
@@ -187,7 +187,7 @@ public class AqoursSmart implements SliderPlayer {
 				}
 				getAvailMove(this.player, ncurP, nopP);
 				getAvailMove(this.opplayer, nopP, ncurP);
-    			value = min_Value(new Pair(Double.NEGATIVE_INFINITY, null), new Pair(Double.POSITIVE_INFINITY, null), ncurP, nopP, 4);
+    			value = min_Value(new Pair(Double.NEGATIVE_INFINITY, null), new Pair(Double.POSITIVE_INFINITY, null), ncurP, nopP, 4, d);
     			if (flag) {
 					max_value = new Pair(value.getValue(), value.getFeature().clone());
     				max_i = key.x;
@@ -221,14 +221,15 @@ public class AqoursSmart implements SliderPlayer {
 
     /**
      * Min-value function
-     * @param alpha a number help to pruning the useless path and the feature of that leaf
-     * @param beta a number help to pruning the useless path and the feature of that leaf
+     * @param alpha a number help to pruning the useless path
+     * @param beta a number help to pruning the useless path
      * @param curP the HashMap store the player's pieces position map to the available move's direction
      * @param opP the HashMap store the opponent player's pieces position and its available move
      * @param depth a number represent the depth of minimax searching
-     * @return a double number and feature of the determined leaf
+	 * @param d Direction
+     * @return a double number
      */
-	private Pair<Double, Integer[]> min_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth) {
+	private Pair<Double, Integer[]> min_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
@@ -248,7 +249,9 @@ public class AqoursSmart implements SliderPlayer {
 
 				getAvailMove(this.opplayer, nopP, ncurP);
 				getAvailMove(this.player, ncurP, nopP);
-				Pair<Double, Integer[]> max_v = max_Value(alpha, beta, ncurP, nopP, depth);
+//				printH(nopP, ncurP);
+				Pair<Double, Integer[]> max_v = max_Value(alpha, beta, ncurP, nopP, depth, dir);
+//				System.out.println(max_v.getValue() + " " + max_v.getFeature()[1]);
 				
 				if(max_v.getValue() < beta.getValue()){
 					beta = new Pair(max_v.getValue(), max_v.getFeature().clone());
@@ -269,18 +272,20 @@ public class AqoursSmart implements SliderPlayer {
 
     /**
      * Max-value function
-     * @param alpha a number help to pruning the useless path and the feature of that leaf
-     * @param beta a number help to pruning the useless path and the feature of that leaf
+     * @param alpha a number help to pruning the useless path
+     * @param beta a number help to pruning the useless path
      * @param curP the HashMap store the player's pieces position map to the available move's direction
      * @param opP the HashMap store the opponent player's pieces position and its available move
      * @param depth a number represent the depth of minimax searching
-     * @return a double number and feature of the determined leaf
+	 * @param d Direction
+     * @return a double number
      */
-	private Pair<Double, Integer[]> max_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth) {
+	private Pair<Double, Integer[]> max_Value(Pair<Double, Integer[]> alpha, Pair<Double, Integer[]> beta, HashMap<Point, ArrayList<Direction>> curP, HashMap<Point, ArrayList<Direction>> opP, int depth, Direction dir) {
 		HashMap<Point, ArrayList<Direction>> ncurP, nopP;
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
 			this.temp_f = this.tdleaf.detect_f(curP, opP, player);
+//			System.out.println(temp_f[0]);
 			return new Pair(this.tdleaf.convert_r(this.temp_f), this.temp_f.clone());
 		}
 		for(Point key: curP.keySet()){
@@ -295,7 +300,7 @@ public class AqoursSmart implements SliderPlayer {
 				}
 				getAvailMove(this.player, ncurP, nopP);
 				getAvailMove(this.opplayer, nopP, ncurP);
-				Pair<Double, Integer[]> min_v = min_Value(alpha, beta, ncurP, nopP, depth);
+				Pair<Double, Integer[]> min_v = min_Value(alpha, beta, ncurP, nopP, depth, dir);
 				
 				if(min_v.getValue() > alpha.getValue()){
 					alpha = new Pair(min_v.getValue(), min_v.getFeature().clone());

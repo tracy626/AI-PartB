@@ -16,14 +16,14 @@ import aiproj.slider.Move.Direction;
  * class of tdleaf(lambda) for our AI to choose next move
  */
 public class TDleaf {
-	public double[] weights = {7, 5, 1, 1, 1, 1, 1, 1, 1, 1};
+	public double[] weights = {7, 5.5, 1, 0.9, 1, 1, 0.9, 1, 1.1, 1};
 	public ArrayList<Integer[]> features; 
 	// ArrayList to store all the features of the leaves state which determined the moves in happened states
 	private ArrayList<Double> diff; 
 	// ArrayList to store the differential number of the d[r(si,w)]/d[wj] part, detail  in our comment.txt
 	private ArrayList<Double> td; // ArrayList to store the temporal differences between states
-	private static final double ALPHA = 2000; // Learning rate in tdleaf(lambda)
-	private static final double LAMBDA = 0.8; // Lambda value of tdleaf(lambda)
+	private static final double ALPHA = 1; // Learning rate in tdleaf(lambda)
+	private static final double LAMBDA = 0.7; // Lambda value of tdleaf(lambda)
 	public int count; // count of current number of state from the begin of the game
 	private ArrayList<Point> block; // ArrayList stored the block's position
 	private int dimension; // Number of the dimension of current game
@@ -132,18 +132,12 @@ public class TDleaf {
 					for(int k=j; k < count - 1; k++){
 						sumD += Math.pow(LAMBDA, k - j) * this.td.get(j);
 					}
-//					System.out.println(sumD);
 					sumDiff += this.diff.get(j) * features.get(j)[i] * sumD;
 				}
 				// update the vector w
-				
 				weights[i] += ALPHA * sumDiff;
 			}
 		}
-		for (double i: weights){
-			System.out.print(i+" ");
-		}
-		System.out.println();
 	}
 	
 	/**
