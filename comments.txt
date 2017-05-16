@@ -1,0 +1,33 @@
+COMP30024 Artificial Intelligence
+Yue Fang 715889
+Zhe Tang 743398
+Project Part B Report
+
+In this project, we have used Minimax with alpha-beta pruning, and updated weights by TDLeaf(λ) to evaluate the score of each state.
+
+After our test, we decide to use depth equal to 4 in Minimax, it has best response of result of game and meets the constraints of time and memory limits.
+In order to saving time and space we chose alpha-beta pruning instead of original Minimax search.
+
+For machine learning part, we chose TDLeaf(λ), as we can adjust the learning rate and the Lambda value to improve the weights of each feature we set during the game.
+Combining the lecture notes and the paper - TDLeaf(λ): Combining Temporal Difference Learning with Game-Tree Search, we used the formula (9) in the paper to prove every w(i) in vector w.
+Based on the paper and our test result, we set learning rate as 1 and λ as 0.7. Also, the initial vector weights is set depending on our test result.
+
+What is more, we think evaluation function is important for the Minimax. For each state, we have counted 10 features — 
+A. For current player (‘H’ or ‘V’):
+1) numbers of players escape the board (positive effect to us); 
+2) steps away from the initial position of players (positive effect to us); 
+3) numbers of other pieces of players on the way of our players (negative effect to us); 
+4) numbers of opponent’s pieces on the way of our players (negative effect to us); 
+5) numbers of blocks on the way of our players (negative effect to us);
+
+B. For opponent player (‘V’ or ‘H’):
+1) numbers of players escape the board (negative effect to us); 
+2) steps away from the initial position of players (negative effect to us); 
+3) numbers of other pieces of players on the way of opponent players (positive effect to us); 
+4) numbers of opponent’s pieces on the way of opponent players (positive effect to us); 
+5) numbers of blocks on the way of opponent players (positive effect to us);
+
+So, the evaluation function is using features dot product with weights.
+
+After all, the data structure we implement to record the board state is two HashMaps (one for our player and the other for the opponent) and a ArrayList of block (since it never changes during one game). 
+We think this will save time when each searching, because it avoid to exploring the blank (‘+’) on the board.

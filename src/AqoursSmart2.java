@@ -234,7 +234,7 @@ public class AqoursSmart2 implements SliderPlayer {
 		depth--;
 		if (cutoff_test(depth,curP,opP)) {
 			this.temp_f = this.tdleaf.detect_f(curP, opP, player);
-			return new Pair(this.tdleaf.convert_r(this.temp_f), this.temp_f.clone());
+			return new Pair(this.tdleaf.evaluation(this.temp_f), this.temp_f.clone());
 		}
 		for(Point key: opP.keySet()){
 			for(Direction d: opP.get(key)){
@@ -286,7 +286,7 @@ public class AqoursSmart2 implements SliderPlayer {
 		if (cutoff_test(depth,curP,opP)) {
 			this.temp_f = this.tdleaf.detect_f(curP, opP, player);
 //			System.out.println(temp_f[0]);
-			return new Pair(this.tdleaf.convert_r(this.temp_f), this.temp_f.clone());
+			return new Pair(this.tdleaf.evaluation(this.temp_f), this.temp_f.clone());
 		}
 		for(Point key: curP.keySet()){
 			for(Direction d: curP.get(key)){

@@ -20,7 +20,7 @@ public class TDleaf {
 	public ArrayList<Integer[]> features; 
 	// ArrayList to store all the features of the leaves state which determined the moves in happened states
 	private ArrayList<Double> diff; 
-	// ArrayList to store the differential number of the d[r(si,w)]/d[wj] part, detail  in our comment.txt
+	// ArrayList to store the differential number of the d[r(si,w)]/d[wj] part
 	private ArrayList<Double> td; // ArrayList to store the temporal differences between states
 	private static final double ALPHA = 1; // Learning rate in tdleaf(lambda)
 	private static final double LAMBDA = 0.7; // Lambda value of tdleaf(lambda)
@@ -117,12 +117,12 @@ public class TDleaf {
 	 * a helper function to update vector w according to the formula of tdleaf(lambda)
 	 */
 	public void prove_w() {
-		this.diff.add(1 - Math.pow(tanh(count - 1), 2));
+		this.diff.add(1 - Math.pow(convert_r(count - 1), 2));
 		if(count > 1){
 			// temperal difference of state i-1 equal to reward of i substance reward of i-1
 			// since count is recorded from one but the index of ArrayList counts from 0
 			// we use reward of count-1 minus reward of count-2
-			this.td.add(tanh(count - 1) - tanh(count - 2));
+			this.td.add(convert_r(count - 1) - convert_r(count - 2));
 			for(int i=0; i < weights.length; i++){
 				// initial sum of differential of reward of determined leaf of state j to w(i) times sum of d
 				double sumDiff = 0;
@@ -145,7 +145,7 @@ public class TDleaf {
 	 * @param f features
 	 * @return a double, the value of the evaluation
 	 */
-	public double convert_r(Integer[] f){
+	public double evaluation(Integer[] f){
 		double eval = 0;
 		for(int i=0; i < weights.length; i++){
 			eval += f[i] * weights[i];
@@ -158,8 +158,8 @@ public class TDleaf {
 	 * @param n the number of current state
 	 * @return a double between -1 and +1 
 	 */
-	public double tanh(int n) {
+	public double convert_r(int n) {
 		// first use conver_r to calculate the evaluation value
-		return Math.tanh(convert_r(features.get(n)));
+		return Math.tanh(evaluation(features.get(n)));
 	}
 }
