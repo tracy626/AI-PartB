@@ -1,0 +1,73 @@
+============================================
+vis/results
+18:23:24_Tuesday_16_May_2017
+============================================
+================== FILES ==================
+submitted files:
+agent.txt, AqoursSmart.java, comments.txt, invis, Pair.java, TDleaf.java, vis
+(ignore 'vis' and 'invis')
+
+agent file found. main class name detected:
+'AqoursSmart'
+
+comments file found
+
+
+
+
+===========================================
+=============== COMPILATION ===============
+compiling the java project with command:
+ javac -cp ../data/aima-core.jar -d ./ *.java -g:none
+
+results:
+(no errors or warnings)
+
+project compiled successfully (^.^)
+===========================================
+================ TEST GAMES ===============
+-- game 1 (5x5 self-play) ------ 
+AqoursSmart playing against itself on a 5x5 board
+command:
+ java -cp ../data/aima-core.jar -Xmx1500k aiproj.slider.Referee 5 AqoursSmart AqoursSmart
+
+============================================
+src/TDleaf.java
+18:23:23_Tuesday_16_May_2017
+============================================
+
+This file not shown by user request
+File length 5406 bytes
+
+============================================
+src/comments.txt
+18:23:23_Tuesday_16_May_2017
+============================================
+
+This file not shown by user request
+File length 2503 bytes
+
+============================================
+src/agent.txt
+18:23:23_Tuesday_16_May_2017
+============================================
+
+This file not shown by user request
+File length 13 bytes
+
+============================================
+src/Pair.java
+18:23:23_Tuesday_16_May_2017
+============================================
+
+This file not shown by user request
+File length 645 bytes
+
+============================================
+src/AqoursSmart.java
+18:23:23_Tuesday_16_May_2017
+============================================
+
+This file not shown by user request
+File length 12375 bytes
+

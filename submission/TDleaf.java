@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import aiproj.slider.Move;
 import aiproj.slider.Move.Direction;
 
 /**
