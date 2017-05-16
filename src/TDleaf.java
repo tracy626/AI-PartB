@@ -1,6 +1,6 @@
 /**
- * Yue Fang 715889
- * Zhe Tang 743398
+ * Yue Fang 715889 (fang1)
+ * Zhe Tang 743398 (zhet1)
  * COMP30024 Artificial Intelligence
  * Project Part B
  */

@@ -1,6 +1,6 @@
 COMP30024 Artificial Intelligence
-Yue Fang 715889
-Zhe Tang 743398
+Yue Fang 715889 (fang1)
+Zhe Tang 743398 (zhet1)
 Project Part B Report
 
 In this project, we have used Minimax with alpha-beta pruning, and updated weights by TDLeaf(λ) to evaluate the score of each state. We created AqoursSmart Class as agen, TDleaf Class and a Pair Class.
